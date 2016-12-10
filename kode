@@ -1,0 +1,81 @@
+// ==UserScript==
+// @name        auto-ding
+// @namespace   test
+// @description auto ding tokopedia
+// @include     http://www.tokopedia.com/<your_store_ID>/*
+// @version     1
+// @author      Korslet
+// ==/UserScript==
+$( document ).ready(function() {
+    //check initialisation session storage
+    if(typeofsessionStorage.cding=='undefined'|| typeofsessionStorage.cding_save=='undefined'){
+        sessionStorage.cding='0';
+        sessionStorage.cding_save='0';
+    }
+    if(typeofsessionStorage.crefresh=='undefined')
+        sessionStorage.crefresh='0';
+    //interface
+    $html ='<table id="s-show"><tr><td>countdown ding</td><td id="s-minute"></td</tr><tr><td>countdown refresh</td><td id="s-refresh"></td</tr></table>';
+    $html =$html+'counter auto ding: <input id="c-ding" type="text" style="width:30px" value="'+sessionStorage.cding_save+'"></input> minute<br>';
+    $html =$html+'counter auto refresh: <input id="c-refresh" type="text" style="width:30px" value="'+sessionStorage.crefresh+'"></input> minute<br>';
+    $html =$html+'<input id="s-submit" type="button" value="submit"><input id="s-cancel" type="button" value="cancel">';
+    $('.span5.product-image-holder').prepend($html);
+    //check countdown running
+    if(sessionStorage.start=='true'&& typeofsessionStorage.start !=='undefined'){
+        $('#c-refresh').attr('disabled','disabled');
+        $('#c-ding').attr('disabled','disabled');
+        $('#s-minute').html(sessionStorage.cding);
+        $('#s-refresh').html($('#c-refresh').val());
+        $('#s-show').show();
+        start_ding();
+    }else{
+        $('#c-ding').removeAttr('disabled');
+        $('#c-refresh').removeAttr('disabled');
+        $('#s-show').hide();
+    }
+    //even if click submit
+    $('#s-submit').click(function(){
+        $('#c-ding').attr('disabled','disabled');
+        $('#c-refresh').attr('disabled','disabled');
+        sessionStorage.cding=$('#c-ding').val();
+        sessionStorage.cding_save=sessionStorage.cding;
+        sessionStorage.crefresh=$('#c-refresh').val();
+        sessionStorage.start='true';
+        $('#s-minute').html($('#c-ding').val());
+        $('#s-refresh').html($('#c-refresh').val());
+        $('#s-show').show();
+        start_ding();
+    });
+    //even if click cancel
+    $('#s-cancel').click(function(){
+        $('#c-ding').removeAttr('disabled');
+        $('#c-refresh').removeAttr('disabled');
+        $('#s-show').hide();
+        sessionStorage.start='false';
+    });
+    functionstart_ding(){
+        varrefresh = sessionStorage.crefresh;
+        if(sessionStorage.cding != 0 && sessionStorage.crefresh != 0)
+            varcounter=setInterval(timer, 60*1000); //1000 will  run it every 1 minute
+        functiontimer(){
+            if(sessionStorage.start=='true'){
+                sessionStorage.cding=sessionStorage.cding-1;
+                refresh=refresh-1;
+                $('#s-minute').html(sessionStorage.cding);
+                $('#s-refresh').html(refresh);
+                if(sessionStorage.cding <= 0){
+                    clearInterval(counter);
+                    //counter ended, do something here
+                    $("#dink-it").click();
+                    //location.reload();
+                    return;
+                }elseif(refresh <=0)
+                    location.reload();
+                //Do code for showing the number of seconds here
+                console.log(sessionStorage.cding+" minute");
+            }else{
+                clearInterval(counter);
+            }
+        }
+    }
+});
